@@ -184,6 +184,16 @@ export function App(props: IProps & IDefaultWidgetProps) {
         type: 'tm-import-tiddlers',
         param: JSON.stringify([tiddler]),
       });
+
+      if ($tw.wiki.getTiddlerText('$:/layout') !== '$:/core/ui/PageTemplate') {
+        props.parentWidget?.dispatchEvent({
+          type: 'tm-modal',
+          param: '$:/plugins/itw/tw-excalidraw/ui/import-modal',
+          paramObject: {
+            tiddler,
+          },
+        });
+      }
     }
 
     const sceneCoordinates = viewportCoordsToSceneCoords({

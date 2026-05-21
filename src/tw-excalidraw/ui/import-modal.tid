@@ -1,0 +1,6 @@
+title: $:/plugins/itw/tw-excalidraw/ui/import-modal
+subtitle: Import
+
+<$tiddler tiddler="$:/Import">
+<$transclude tiddler={{{ [[$:/Import]] :cascade[all[shadows+tiddlers]tag[$:/tags/ViewTemplateBodyFilter]!is[draft]get[text]] :and[!is[blank]else[$:/core/ui/ViewTemplate/body/default]] }}} />
+</$tiddler>
