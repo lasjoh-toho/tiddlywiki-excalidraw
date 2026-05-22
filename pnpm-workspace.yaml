@@ -1,3 +1,10 @@
+allowBuilds:
+  '@parcel/watcher': false
+  dprint: false
+  esbuild: false
+  svelte-preprocess: false
+  unrs-resolver: false
+
 onlyBuiltDependencies:
   - '@parcel/watcher'
   - dprint
