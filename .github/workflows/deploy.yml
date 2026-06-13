@@ -38,13 +38,27 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build wiki
-        run: npm run publish:offline
+      - name: Build plugin
+        run: npm run build
+
+      - name: Build demo wiki as single HTML
+        run: |
+          node -e "
+          const tw = require('tiddlywiki').TiddlyWiki();
+          tw.boot.argv = [
+            'wiki',
+            '--load', 'dist/\$__plugins_itw_tw-excalidraw.json',
+            '--rendertiddler', '\$:/core/save/all', 'index.html', 'text/plain'
+          ];
+          tw.boot.boot();
+          "
+          mkdir -p pages
+          cp wiki/output/index.html pages/index.html
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist/
+          path: pages/
 
       - name: Deploy to GitHub Pages
         id: deployment
