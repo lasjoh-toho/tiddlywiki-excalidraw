@@ -6,7 +6,6 @@ on:
       - master
       - main
     paths-ignore:
-      # Readme.md should not trigger wiki deploy
       - '*.md'
 
 jobs:
@@ -18,42 +17,44 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Install Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
-          node-version: lts/*
+          node-version: '20'
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v5
+        uses: pnpm/action-setup@v4
         with:
           version: 'latest'
           run_install: false
 
-      - name: Cache dependencies
-        uses: actions/cache@v5
-        with:
-          path: |
-            **/node_modules
-            ~/.pnpm-store
-            ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-            ${{ runner.os }}-node-
-
       - name: Install Dependencies
         run: pnpm install
 
-      - name: Build Library and static website
-        run: pnpm run publish
+      - name: Build plugin
+        run: npm run build
+
+      - name: Build demo wiki as single HTML
+        run: |
+          node -e "
+          const tw = require('tiddlywiki').TiddlyWiki();
+          tw.boot.argv = [
+            'wiki',
+            '--load', 'dist/\$__plugins_itw_tw-excalidraw.json',
+            '--rendertiddler', '\$:/core/save/all', 'index.html', 'text/plain'
+          ];
+          tw.boot.boot();
+          "
+          mkdir -p pages
+          cp wiki/output/index.html pages/index.html
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository
-          path: ./dist
+          path: ./pages
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
