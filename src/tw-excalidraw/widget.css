@@ -473,3 +473,22 @@
 .inline-board__close-btn:hover {
   background: rgba(0,0,0,0.75);
 }
+
+/* ── Fullscreen: Excalidraw native UI entfernen ──────────── */
+
+/* Hyperlink-Popup komplett ausblenden im Fullscreen */
+.inline-board__canvas-wrap .excalidraw-hyperlinkContainer {
+  display: none !important;
+}
+
+/* Auch den Edit-Button auf Embeddable-Elementen ausblenden */
+.inline-board__canvas-wrap .excalidraw .element-actions__button,
+.inline-board__canvas-wrap .excalidraw .popover {
+  display: none !important;
+}
+
+/* Canvas-Wrap füllt den Fullscreen-Container */
+.inline-board__canvas-wrap {
+  width: 100%;
+  height: 100%;
+}

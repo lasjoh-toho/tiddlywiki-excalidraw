@@ -52,6 +52,9 @@ export interface IProps {
   gridMode?: string;
 
   onSave: (tiddler: string | undefined, data: string, isActive: boolean) => void;
+
+  /** Optional: intercept link opens before the default handler runs. Return true to suppress default. */
+  onLinkOpenOverride?: (element: NonDeleted<ExcalidrawElement>, event: Event) => boolean | void;
 }
 
 export function App(props: IProps & IDefaultWidgetProps) {
@@ -68,6 +71,7 @@ export function App(props: IProps & IDefaultWidgetProps) {
     zenMode,
     gridMode,
     onSave,
+    onLinkOpenOverride,
     parentWidget,
   } = props;
 
@@ -300,6 +304,9 @@ export function App(props: IProps & IDefaultWidgetProps) {
   }
 
   function handleLinkOpen(element: NonDeleted<ExcalidrawElement>, event: Event): void {
+    // Let the override intercept first (e.g. InlineBoard fullscreen shows its own modal)
+    if (onLinkOpenOverride?.(element, event)) return;
+
     const link = element.link;
 
     if (!link) return;
