@@ -48,7 +48,9 @@ export function TiddlerCard({ title, onClick, onDoubleClick }: TiddlerCardProps)
         <div className="tiddler-card__caption tiddler-card__caption--empty">Keine Caption</div>
       )}
       {display === 'text' && (
-        <div className="tiddler-card__text">{text || <em style={{ opacity: 0.4 }}>Kein Text</em>}</div>
+        <div className="tiddler-card__text">
+          {text ? text : <em style={{ opacity: 0.4 }}>Kein Text</em>}
+        </div>
       )}
     </div>
   );

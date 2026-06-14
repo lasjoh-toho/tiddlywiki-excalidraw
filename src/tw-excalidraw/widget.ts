@@ -9,6 +9,7 @@ import type { IChangedTiddlers } from 'tiddlywiki';
 import { yesOrNo } from './utils/yes-or-no.js';
 
 import { App, IProps } from './components/App';
+import { InlineBoard } from './components/InlineBoard';
 
 import './widget.css';
 
@@ -16,7 +17,9 @@ import './widget.css';
 window.EXCALIDRAW_EXPORT_SOURCE = 'tw-excalidraw';
 
 class ExcalidrawWidget extends Widget<IProps> {
-  public reactComponent = App;
+  public get reactComponent() {
+    return yesOrNo(this.getAttribute('inline')) ? InlineBoard : App;
+  }
   public getProps = () => {
     const editTitle = this.getAttribute('tiddler');
 
