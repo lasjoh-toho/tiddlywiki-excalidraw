@@ -2,7 +2,7 @@
 
 A whiteboard plugin using Excalidraw.
 
-Demonstration and documentation at <https://itsthewhale.github.io/tiddlywiki-excalidraw>.
+Demonstration and documentation at <https://lasjoh-toho.github.io/tiddlywiki-excalidraw>.
 
 ## Development
 
