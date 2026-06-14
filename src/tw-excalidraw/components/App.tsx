@@ -15,6 +15,15 @@ import type { JSX } from 'react';
 import { useEffect, useRef, useState } from 'react';
 
 import { yesOrNo } from '../utils/yes-or-no.js';
+
+// Trusted iframe origins for ClassroomChat embeds
+// Can be extended via $:/config/itw/tw-excalidraw/TrustedEmbeds (newline-separated)
+function getTrustedEmbeds(): string[] {
+  const configured = $tw.wiki.getTiddlerText('$:/config/itw/tw-excalidraw/TrustedEmbeds', '');
+  const fromConfig = configured.split('\n').map((s: string) => s.trim()).filter(Boolean);
+  return ['https://chat.schule.de', ...fromConfig];
+}
+
 import { MainMenuItemEmbedTiddler } from './MainMenuItemEmbedTiddler.js';
 import { MainMenuItemEnterLayout } from './MainMenuItemEnterLayout.js';
 import { MainMenuItemExitLayout } from './MainMenuItemExitLayout.js';
@@ -66,6 +75,40 @@ export function App(props: IProps & IDefaultWidgetProps) {
 
   const [excalidrawAPI, setExcalidrawAPI] = useState<ExcalidrawImperativeAPI | null>(null);
   const [isReady, setIsReady] = useState<boolean>(false);
+
+  // postMessage: ClassroomChat → Canvas
+  useEffect(() => {
+    const handler = (event: MessageEvent): void => {
+      const trusted = getTrustedEmbeds();
+      if (!trusted.includes(event.origin) && event.origin !== window.location.origin) return;
+
+      if (event.data?.type === 'classroomchat:add-tiddler') {
+        const { tiddler: t } = event.data as { tiddler: Record<string, string> };
+        if (!t?.title) return;
+
+        if (!$tw.wiki.tiddlerExists(t.title)) {
+          $tw.wiki.addTiddler(new $tw.Tiddler({
+            title: t.title,
+            text:  t.text ?? '',
+            tags:  Array.isArray(t.tags) ? (t.tags as string[]).join(' ') : (t.tags ?? ''),
+            ...Object.fromEntries(
+              Object.entries(t).filter(([k]) => k.startsWith('cc-'))
+            ),
+          }));
+        }
+
+        if (excalidrawAPI) {
+          const appState = excalidrawAPI.getAppState();
+          const cx = (appState.width  / 2 - appState.scrollX) / appState.zoom.value;
+          const cy = (appState.height / 2 - appState.scrollY) / appState.zoom.value;
+          insertTiddlerEmbed(t.title, cx, cy);
+        }
+      }
+    };
+
+    window.addEventListener('message', handler);
+    return () => window.removeEventListener('message', handler);
+  }, [excalidrawAPI]);
 
   function insertTiddlerEmbed(title: string, x: number, y: number): void {
     if (!excalidrawAPI) return;
@@ -314,7 +357,12 @@ export function App(props: IProps & IDefaultWidgetProps) {
             generateLinkForSelection={generateLinkForSelection}
             onLinkOpen={handleLinkOpen}
             renderEmbeddable={renderEmbeddable}
-            validateEmbeddable={true}
+            validateEmbeddable={(url: string) => {
+              const trusted = getTrustedEmbeds();
+              if (trusted.some(origin => url.startsWith(origin))) return true;
+              // also allow tiddler transclusions and element links
+              return true;
+            }}
             initialData={initialData}
             UIOptions={{
               canvasActions: {

@@ -1,6 +1,7 @@
 import type { JSX } from 'react';
 import { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
+import type { DisplayMode } from './TiddlerCard.js';
 
 interface TiddlerEditModalProps {
   title: string;
@@ -9,70 +10,86 @@ interface TiddlerEditModalProps {
 
 export function TiddlerEditModal({ title, onClose }: TiddlerEditModalProps): JSX.Element {
   const tiddler = $tw.wiki.getTiddler(title)?.fields ?? {};
-  const [synopsis, setSynopsis] = useState<string>((tiddler['synopsis'] as string | undefined) ?? '');
 
-  // Close on Escape
+  const [caption, setCaption] = useState<string>((tiddler['caption'] as string | undefined) ?? '');
+  const [text,    setText]    = useState<string>((tiddler['text']    as string | undefined) ?? '');
+  const [display, setDisplay] = useState<DisplayMode>(
+    ((tiddler['cc-canvas-display'] as DisplayMode | undefined) ?? 'title')
+  );
+
   useEffect(() => {
     function handleKey(e: KeyboardEvent): void {
       if (e.key === 'Escape') onClose();
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') save();
     }
     document.addEventListener('keydown', handleKey);
     return () => document.removeEventListener('keydown', handleKey);
-  }, [onClose]);
+  }, [caption, text, display]);
 
   function save(): void {
-    $tw.wiki.addTiddler(
-      new $tw.Tiddler(tiddler, { synopsis }),
-    );
+    $tw.wiki.addTiddler(new $tw.Tiddler(tiddler, {
+      caption,
+      text,
+      'cc-canvas-display': display,
+    }));
     onClose();
   }
 
   return ReactDOM.createPortal(
-    <div
-      className="tw-exc-modal-overlay"
-      onClick={onClose}
-    >
-      <div
-        className="tw-exc-modal tw-exc-modal--edit"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="tw-exc-modal__header">
-          <h3 className="tw-exc-modal__title">{title}</h3>
-          <button
-            className="tw-exc-modal__btn-close"
-            onClick={onClose}
-            title="Abbrechen (Esc)"
-          >
-            ✕
-          </button>
-        </div>
+    <div className="edit-modal-overlay" onClick={onClose}>
+      <div className="edit-modal" onClick={(e) => e.stopPropagation()}>
 
-        <div className="tw-exc-modal__body tw-exc-modal__body--edit">
-          <label className="tw-exc-edit__label">
-            Synopsis
-            <span className="tw-exc-edit__hint">Kurze Zusammenfassung – wird auf der Canvas-Karte angezeigt</span>
-            <textarea
-              className="tw-exc-edit__textarea"
-              value={synopsis}
-              rows={4}
-              // eslint-disable-next-line jsx-a11y/no-autofocus
-              autoFocus
-              onChange={(e) => setSynopsis(e.target.value)}
-              onKeyDown={(e) => {
-                // Ctrl+Enter or Cmd+Enter saves
-                if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) save();
-              }}
-            />
-          </label>
-          <p className="tw-exc-edit__hint-key">Ctrl+Enter zum Speichern</p>
-        </div>
+        <h3 className="edit-modal__heading">{title}</h3>
 
-        <div className="tw-exc-modal__footer">
-          <button className="tw-exc-modal__btn-cancel" onClick={onClose}>Abbrechen</button>
-          <button className="tw-exc-modal__btn-save" onClick={save}>Speichern</button>
+        <label className="edit-modal__label">
+          Caption
+          <input
+            className="edit-modal__input"
+            value={caption}
+            // eslint-disable-next-line jsx-a11y/no-autofocus
+            autoFocus
+            onChange={(e) => setCaption(e.target.value)}
+          />
+        </label>
+
+        <label className="edit-modal__label">
+          Text
+          <textarea
+            className="edit-modal__textarea"
+            value={text}
+            rows={6}
+            onChange={(e) => setText(e.target.value)}
+          />
+        </label>
+
+        <fieldset className="edit-modal__fieldset">
+          <legend>Auf dem Canvas zeigen</legend>
+          {([
+            ['title',         'Nur Titel'],
+            ['title-caption', 'Titel + Caption'],
+            ['caption',       'Nur Caption'],
+            ['text',          'Volltext'],
+          ] as const).map(([value, label]) => (
+            <label key={value} className="edit-modal__radio">
+              <input
+                type="radio"
+                name="display"
+                value={value}
+                checked={display === value}
+                onChange={() => setDisplay(value)}
+              />
+              {label}
+            </label>
+          ))}
+        </fieldset>
+
+        <div className="edit-modal__actions">
+          <span className="edit-modal__hint">Ctrl+Enter zum Speichern</span>
+          <button onClick={onClose}>Abbrechen</button>
+          <button onClick={save} className="edit-modal__save">Speichern</button>
         </div>
       </div>
     </div>,
-    document.body,
+    document.body
   );
 }
