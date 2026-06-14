@@ -17,9 +17,13 @@ import './widget.css';
 window.EXCALIDRAW_EXPORT_SOURCE = 'tw-excalidraw';
 
 class ExcalidrawWidget extends Widget<IProps> {
-  public get reactComponent() {
-    return yesOrNo(this.getAttribute('inline')) ? InlineBoard : App;
+  public reactComponent = App as unknown as typeof App;
+
+  public execute(): void {
+    super.execute();
+    this.reactComponent = (yesOrNo(this.getAttribute('inline')) ? InlineBoard : App) as unknown as typeof App;
   }
+
   public getProps = () => {
     const editTitle = this.getAttribute('tiddler');
 
