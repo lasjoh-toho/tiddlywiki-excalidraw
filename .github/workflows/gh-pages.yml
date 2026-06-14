@@ -29,8 +29,15 @@ jobs:
         with:
           version: 'latest'
 
+      - name: Configure pnpm to use npmjs registry directly
+        run: |
+          pnpm config set store-dir ~/.pnpm-store
+          pnpm config set network-concurrency 1
+
       - name: Install Dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --network-timeout 60000
+        env:
+          npm_config_registry: https://registry.npmjs.org/
 
       - name: Build plugin
         run: npm run build
