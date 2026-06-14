@@ -2,6 +2,7 @@ import type { JSX } from 'react';
 import { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import type { DisplayMode } from './TiddlerCard.js';
+import { lingo } from '../utils/lingo.js';
 
 interface TiddlerEditModalProps {
   title: string;
@@ -35,6 +36,13 @@ export function TiddlerEditModal({ title, onClose }: TiddlerEditModalProps): JSX
     onClose();
   }
 
+  const displayOptions: Array<[DisplayMode, string]> = [
+    ['title',         lingo('modal/display-title')],
+    ['title-caption', lingo('modal/display-title-caption')],
+    ['caption',       lingo('modal/display-caption')],
+    ['text',          lingo('modal/display-text')],
+  ];
+
   return ReactDOM.createPortal(
     <div className="edit-modal-overlay" onClick={onClose}>
       <div className="edit-modal" onClick={(e) => e.stopPropagation()}>
@@ -42,7 +50,7 @@ export function TiddlerEditModal({ title, onClose }: TiddlerEditModalProps): JSX
         <h3 className="edit-modal__heading">{title}</h3>
 
         <label className="edit-modal__label">
-          Caption
+          {lingo('modal/caption-label')}
           <input
             className="edit-modal__input"
             value={caption}
@@ -53,7 +61,7 @@ export function TiddlerEditModal({ title, onClose }: TiddlerEditModalProps): JSX
         </label>
 
         <label className="edit-modal__label">
-          Text
+          {lingo('modal/text-label')}
           <textarea
             className="edit-modal__textarea"
             value={text}
@@ -63,13 +71,8 @@ export function TiddlerEditModal({ title, onClose }: TiddlerEditModalProps): JSX
         </label>
 
         <fieldset className="edit-modal__fieldset">
-          <legend>Auf dem Canvas zeigen</legend>
-          {([
-            ['title',         'Nur Titel'],
-            ['title-caption', 'Titel + Caption'],
-            ['caption',       'Nur Caption'],
-            ['text',          'Volltext'],
-          ] as const).map(([value, label]) => (
+          <legend>{lingo('modal/display-label')}</legend>
+          {displayOptions.map(([value, label]) => (
             <label key={value} className="edit-modal__radio">
               <input
                 type="radio"
@@ -84,9 +87,9 @@ export function TiddlerEditModal({ title, onClose }: TiddlerEditModalProps): JSX
         </fieldset>
 
         <div className="edit-modal__actions">
-          <span className="edit-modal__hint">Ctrl+Enter zum Speichern</span>
-          <button onClick={onClose}>Abbrechen</button>
-          <button onClick={save} className="edit-modal__save">Speichern</button>
+          <span className="edit-modal__hint">{lingo('modal/save-hint')}</span>
+          <button onClick={onClose}>{lingo('modal/cancel')}</button>
+          <button onClick={save} className="edit-modal__save">{lingo('modal/save')}</button>
         </div>
       </div>
     </div>,

@@ -1,0 +1,17 @@
+title: $:/plugins/itw/tw-excalidraw/language/de-DE/UI
+
+card/click-hint: Klick: Details · Doppelklick: Bearbeiten
+card/no-caption: Keine Caption
+card/no-text: Kein Text
+modal/close: Schließen (Esc)
+modal/caption-label: Caption
+modal/text-label: Text
+modal/display-label: Auf dem Canvas zeigen
+modal/display-title: Nur Titel
+modal/display-title-caption: Titel + Caption
+modal/display-caption: Nur Caption
+modal/display-text: Volltext
+modal/cancel: Abbrechen
+modal/save: Speichern
+modal/save-hint: Ctrl+Enter zum Speichern
+board/open-hint: 🔍 Klicken zum Öffnen

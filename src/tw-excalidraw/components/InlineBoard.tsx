@@ -3,16 +3,12 @@ import { useEffect, useRef, useState } from 'react';
 import type { IProps } from './App.js';
 import { App } from './App.js';
 import type { IDefaultWidgetProps } from '$:/plugins/linonetwo/tw-react/index.js';
+import { lingo } from '../utils/lingo.js';
 
-/**
- * InlineBoard: zeigt das Excalidraw-Board verkleinert (viewMode) an.
- * Ein Klick öffnet das Board im Fullscreen-Modus als Modal.
- */
 export function InlineBoard(props: IProps & IDefaultWidgetProps): JSX.Element {
   const [fullscreen, setFullscreen] = useState(false);
   const overlayRef = useRef<HTMLDivElement>(null);
 
-  // Escape schließt Fullscreen
   useEffect(() => {
     if (!fullscreen) return;
     function handleKey(e: KeyboardEvent): void {
@@ -35,7 +31,7 @@ export function InlineBoard(props: IProps & IDefaultWidgetProps): JSX.Element {
           <button
             className="inline-board__close-btn"
             onClick={() => setFullscreen(false)}
-            title="Schließen (Esc)"
+            title={lingo('modal/close')}
           >
             ✕
           </button>
@@ -49,13 +45,13 @@ export function InlineBoard(props: IProps & IDefaultWidgetProps): JSX.Element {
     <div
       className="inline-board__preview"
       onClick={() => setFullscreen(true)}
-      title="Klicken zum Öffnen"
+      title={lingo('board/open-hint')}
     >
       <div className="inline-board__preview-inner" style={{ pointerEvents: 'none' }}>
         <App {...props} viewMode="yes" />
       </div>
       <div className="inline-board__preview-hint">
-        <span>🔍 Klicken zum Öffnen</span>
+        <span>{lingo('board/open-hint')}</span>
       </div>
     </div>
   );

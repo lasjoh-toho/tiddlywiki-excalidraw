@@ -22,7 +22,7 @@ TODO: When the necessary machinery is implemented in the TiddlyWiki core, remove
 
 	<!-- Compute the lingo-base-->
 
-	<$let raw-language-code={{{ [[$:/language]get[text]get[name]] }}} language-code={{{ [<raw-language-code>match[en-GB]] ~[<raw-language-code>match[zh-Hant]] ~[<raw-language-code>match[zh-Hans]] ~[[en-GB]] }}}>
+	<$let raw-language-code={{{ [[$:/language]get[text]get[name]] }}} language-code={{{ [<raw-language-code>match[en-GB]] ~[<raw-language-code>match[de-DE]] ~[<raw-language-code>match[zh-Hant]] ~[<raw-language-code>match[zh-Hans]] ~[[en-GB]] }}}>
 
         <$transclude $tiddler={{{ [[$:/plugins/itw/tw-excalidraw/language/]addsuffix<language-code>addsuffix[/]addsuffix<title>] }}} $mode=<<parseMode>>/>
 

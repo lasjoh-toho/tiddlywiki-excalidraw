@@ -1,4 +1,5 @@
 import type { JSX } from 'react';
+import { lingo } from '../utils/lingo.js';
 
 export type DisplayMode = 'title' | 'title-caption' | 'caption' | 'text';
 
@@ -36,7 +37,7 @@ export function TiddlerCard({ title, onClick, onDoubleClick }: TiddlerCardProps)
       style={{ borderLeft: `4px solid ${borderColor}` }}
       onClick={onClick}
       onDoubleClick={(e) => { e.stopPropagation(); onDoubleClick(); }}
-      title="Klick: Details · Doppelklick: Bearbeiten"
+      title={lingo('card/click-hint')}
     >
       {(display === 'title' || display === 'title-caption') && (
         <div className="tiddler-card__title">{title}</div>
@@ -45,11 +46,11 @@ export function TiddlerCard({ title, onClick, onDoubleClick }: TiddlerCardProps)
         <div className="tiddler-card__caption">{caption}</div>
       )}
       {display === 'caption' && !caption && (
-        <div className="tiddler-card__caption tiddler-card__caption--empty">Keine Caption</div>
+        <div className="tiddler-card__caption tiddler-card__caption--empty">{lingo('card/no-caption')}</div>
       )}
       {display === 'text' && (
         <div className="tiddler-card__text">
-          {text ? text : <em style={{ opacity: 0.4 }}>Kein Text</em>}
+          {text ? text : <em style={{ opacity: 0.4 }}>{lingo('card/no-text')}</em>}
         </div>
       )}
     </div>
