@@ -3796,8 +3796,8 @@
     {
       "id": "demo-frage-001",
       "type": "embeddable",
-      "x": 100,
-      "y": 650,
+      "x": -350,
+      "y": 130,
       "width": 280,
       "height": 120,
       "link": "{{Demo-Frage}}",
@@ -3826,8 +3826,8 @@
     {
       "id": "demo-pro-001",
       "type": "embeddable",
-      "x": 430,
-      "y": 650,
+      "x": -350,
+      "y": 290,
       "width": 280,
       "height": 120,
       "link": "{{Demo-Pro}}",
@@ -3856,8 +3856,8 @@
     {
       "id": "demo-contra-001",
       "type": "embeddable",
-      "x": 760,
-      "y": 650,
+      "x": -350,
+      "y": 450,
       "width": 280,
       "height": 120,
       "link": "{{Demo-Contra}}",
@@ -3886,8 +3886,8 @@
     {
       "id": "demo-kommentar-001",
       "type": "embeddable",
-      "x": 430,
-      "y": 820,
+      "x": -350,
+      "y": 610,
       "width": 280,
       "height": 140,
       "link": "{{Demo-Kommentar}}",
